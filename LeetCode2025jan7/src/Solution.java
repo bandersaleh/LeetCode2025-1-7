@@ -1,42 +1,39 @@
 import java.util.*;
-//40. Combination Sum II
+//46. Permutations
 public class Solution {
-    public static List<List<Integer>> combinationSum2(int[] candidates, int target) {
+    public static List<List<Integer>> permute(int[] nums) {
         List<List<Integer>> result = new ArrayList<>();
-        Arrays.sort(candidates); // Sort to handle duplicates
-        backtrack(candidates, target, 0, new ArrayList<>(), result);
+        backtrack(nums, new ArrayList<>(), result, new boolean[nums.length]);
         return result;
     }
 
-    private static void backtrack(int[] candidates, int target, int start, List<Integer> current, List<List<Integer>> result) {
-        if (target == 0) {
+    private static void backtrack(int[] nums, List<Integer> current, List<List<Integer>> result, boolean[] used) {
+        if (current.size() == nums.length) {
             result.add(new ArrayList<>(current));
             return;
         }
 
-        for (int i = start; i < candidates.length; i++) {
-            // Skip duplicates
-            if (i > start && candidates[i] == candidates[i - 1]) {
+        for (int i = 0; i < nums.length; i++) {
+            if (used[i]) {
                 continue;
             }
 
-            if (candidates[i] > target) {
-                break; // No need to continue if the current number exceeds the target
-            }
-
-            current.add(candidates[i]);
-            backtrack(candidates, target - candidates[i], i + 1, current, result);
+            used[i] = true;
+            current.add(nums[i]);
+            backtrack(nums, current, result, used);
             current.remove(current.size() - 1); // Backtrack
+            used[i] = false;
         }
     }
 
     public static void main(String[] args) {
-        int[] candidates1 = {10, 1, 2, 7, 6, 1, 5};
-        int target1 = 8;
-        System.out.println("Combinations for target " + target1 + ": " + combinationSum2(candidates1, target1));
+        int[] nums1 = {1, 2, 3};
+        System.out.println("Permutations of " + Arrays.toString(nums1) + ": " + permute(nums1));
 
-        int[] candidates2 = {2, 5, 2, 1, 2};
-        int target2 = 5;
-        System.out.println("Combinations for target " + target2 + ": " + combinationSum2(candidates2, target2));
+        int[] nums2 = {0, 1};
+        System.out.println("Permutations of " + Arrays.toString(nums2) + ": " + permute(nums2));
+
+        int[] nums3 = {1};
+        System.out.println("Permutations of " + Arrays.toString(nums3) + ": " + permute(nums3));
     }
 }
