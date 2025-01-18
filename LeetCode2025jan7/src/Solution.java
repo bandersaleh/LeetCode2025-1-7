@@ -1,29 +1,42 @@
-class Solution {
-    // 233. Number of Digit One
-    public int countDigitOne(int n) {
-        int count = 0;
-        long place = 1; // This will represent the current digit place (1, 10, 100, etc.)
+import java.util.*;
+//40. Combination Sum II
+public class Solution {
+    public static List<List<Integer>> combinationSum2(int[] candidates, int target) {
+        List<List<Integer>> result = new ArrayList<>();
+        Arrays.sort(candidates); // Sort to handle duplicates
+        backtrack(candidates, target, 0, new ArrayList<>(), result);
+        return result;
+    }
 
-        while (place <= n) {
-            // Split n into three parts:
-            // left = higher digits, current digit = middle digit, right = lower digits
-            long left = n / (place * 10); // Higher part of the number
-            long currentDigit = (n / place) % 10; // Current digit at the current place
-            long right = n % place; // Lower part of the number
-
-            // Count the number of '1's contributed by the current digit place
-            if (currentDigit == 0) {
-                count += left * place; // If the current digit is 0, count only the higher part
-            } else if (currentDigit == 1) {
-                count += left * place + right + 1; // If the current digit is 1, count all numbers formed by left and right
-            } else {
-                count += (left + 1) * place; // If the current digit is greater than 1, count all numbers formed by left and right
-            }
-
-            // Move to the next digit place (10 times larger)
-            place *= 10;
+    private static void backtrack(int[] candidates, int target, int start, List<Integer> current, List<List<Integer>> result) {
+        if (target == 0) {
+            result.add(new ArrayList<>(current));
+            return;
         }
 
-        return count;
+        for (int i = start; i < candidates.length; i++) {
+            // Skip duplicates
+            if (i > start && candidates[i] == candidates[i - 1]) {
+                continue;
+            }
+
+            if (candidates[i] > target) {
+                break; // No need to continue if the current number exceeds the target
+            }
+
+            current.add(candidates[i]);
+            backtrack(candidates, target - candidates[i], i + 1, current, result);
+            current.remove(current.size() - 1); // Backtrack
+        }
+    }
+
+    public static void main(String[] args) {
+        int[] candidates1 = {10, 1, 2, 7, 6, 1, 5};
+        int target1 = 8;
+        System.out.println("Combinations for target " + target1 + ": " + combinationSum2(candidates1, target1));
+
+        int[] candidates2 = {2, 5, 2, 1, 2};
+        int target2 = 5;
+        System.out.println("Combinations for target " + target2 + ": " + combinationSum2(candidates2, target2));
     }
 }
